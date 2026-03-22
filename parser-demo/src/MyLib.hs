@@ -2,9 +2,11 @@
 module MyLib (someFunc) where
 
 import Data.List.NonEmpty
+import Data.Char
+import qualified Data.List as L (span)
 
 someFunc :: IO ()
-someFunc = putStrLn "someFunc"
+someFunc = test
 
 -- Simple Arithmetic Token
 data Token
@@ -36,11 +38,34 @@ instance Functor ReadParser where
   --   k :: c -> Parser b
   fmap h (R f) = R (\k -> f (k . h))
 
+parseInt :: String -> Parser Token
+parseInt [] = Final (singleton (TokEof, []))
+parseInt source = let (numpart, rest) = L.span isDigit source
+                   in case numpart of
+                     [] -> parseOp source
+                     _ -> Result (TokNumber (read numpart)) $ parseInt rest
+
 parseOp :: String -> Parser Token
-parseOp [] = Final (singleton (TokEof, []))
 parseOp ('+': rest) = Result TokAdd (parseOp rest)
 parseOp ('-': rest) = Result TokSub (parseOp rest)
 parseOp ('*': rest) = Result TokMul (parseOp rest)
 parseOp ('/': rest) = Result TokDiv (parseOp rest)
 parseOp _ = Fail
+
+
+checkResult :: String -> IO ()
+checkResult source = do
+  case parseInt source of
+    Result tok _newParser -> print tok
+    _ -> fail "Unsupported behavior"
+
+test :: IO ()
+test = do
+  checkResult "++"
+  checkResult "-+"
+  checkResult "/+"
+  checkResult "*+"
+  checkResult "1+"
+
+
 
