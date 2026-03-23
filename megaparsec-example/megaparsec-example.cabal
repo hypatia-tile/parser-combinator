@@ -11,8 +11,12 @@ common warnings
     ghc-options: -Wall
 library
     import:           warnings
-    exposed-modules:  MyLib
-    build-depends:    base ^>=4.20.2.0
+    exposed-modules:
+      MyLib,
+      ArithLex
+    build-depends:
+      base ^>=4.20.2.0,
+      megaparsec
     hs-source-dirs:   src
     default-language: GHC2021
 executable megaparsec-example
