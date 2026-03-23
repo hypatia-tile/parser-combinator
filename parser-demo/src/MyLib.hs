@@ -7,7 +7,7 @@ someFunc :: IO ()
 someFunc = test input
 
 input :: String
-input = "12 + 3 * (45 + 6)"
+input = "a + bcd * 12 + 3 * (45 + 6)"
 
 test :: String -> IO ()
 test src = do
