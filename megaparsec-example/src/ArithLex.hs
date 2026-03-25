@@ -8,7 +8,7 @@ import Data.List.NonEmpty (NonEmpty(..))
 import Data.Void (Void)
 import GHC.Generics (Generic)
 import Text.Megaparsec
-  ( MonadParsec (eof), 
+  ( MonadParsec (eof),
     fancyFailure,
     between,
     many,
@@ -27,7 +27,7 @@ import Text.Megaparsec
     token,
     unPos,
     withRecovery,
-    (<|>)
+    (<|>), registerFancyFailure
   )
 import Text.Megaparsec.Char
   ( char,
@@ -170,8 +170,11 @@ tokenP =
       Left _err -> do
         -- We want a custom lexical error attached to the current position.
         -- Then withRecovery will catch it and call recoverToken.
+        start <- getSourcePos
         bad <- anySingle
-        fancyFailure (Set.singleton (ErrorCustom (InvalidChar bad)))
+        end <- getSourcePos
+        registerFancyFailure (Set.singleton (ErrorCustom (InvalidChar bad)))
+        pure (TError (Span start end) bad) <* sc
 
 --------------------------------------------------------------------------------------------------
 -- Whole lexer
@@ -246,7 +249,7 @@ printLexResult (LexResult toks errs) = do
 mainLex :: IO ()
 mainLex = do
   let input1 = "12 + 3 * (45 + 6)"
-      input2 = "12 + 3 * (7 # 9)\n11 + $"
+      input2 = "12 + 3 * (7 # 9&)\n11 + $"
 
   putStrLn "Input 1 ==="
   putStrLn input1
