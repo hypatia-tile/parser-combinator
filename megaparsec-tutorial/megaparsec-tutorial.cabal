@@ -14,7 +14,8 @@ library
     exposed-modules:  MyLib
     build-depends:
       base ^>=4.20.2.0,
-      megaparsec
+      megaparsec,
+      containers
     hs-source-dirs:   src
     default-language: GHC2021
 executable megaparsec-tutorial
