@@ -11,7 +11,9 @@ common warnings
     ghc-options: -Wall
 library
     import:           warnings
-    exposed-modules:  MyLib
+    exposed-modules:
+      MyLib,
+      Example01.Trivial,
     build-depends:
       base ^>=4.20.2.0,
       megaparsec,
