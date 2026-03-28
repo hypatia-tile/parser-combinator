@@ -14,6 +14,7 @@ library
     exposed-modules:
       MyLib,
       Example01.Trivial,
+      Example01.ParserM,
     build-depends:
       base ^>=4.20.2.0,
       megaparsec,
