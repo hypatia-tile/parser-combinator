@@ -74,5 +74,13 @@ word = neWord `mplus` result ""
       xs <- word
       pure (x:xs)
 
-test01 :: [(Char, String)]
-test01 = runParserM (char 'h') "hello world"
+string :: String -> ParserM String
+string inp = do
+  case inp of
+    "" -> return inp
+    x : xs  -> do
+      _ <- char x
+      _ <- string xs
+      return (x:xs)
+
+test = runParserM . string
