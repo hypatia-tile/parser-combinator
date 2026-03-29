@@ -213,8 +213,48 @@ identifier ks = token $ do
     then mzero
     else return x
 
+data LExpr 
+  = App LExpr LExpr        -- application
+  | Lam String LExpr       -- lambda abstraction
+  | Let String LExpr LExpr -- local definition
+  | Var String             -- variable
+  deriving (Show)
+
+lexpr :: ParserM LExpr
+lexpr = atom `chainl1` (App <$ return ())
+
+atom :: ParserM LExpr
+atom = lam `mplus` llocal `mplus` lvar `mplus` lamparen
+
+lam :: ParserM LExpr
+lam = do
+  _ <- symbol "\\"
+  x <- variable
+  _ <- symbol "->"
+  e <- lexpr
+  return $ Lam x e
+
+llocal :: ParserM LExpr
+llocal = do
+  _ <- symbol "let"
+  x <- variable
+  _ <- symbol "="
+  e <- lexpr
+  _ <- symbol "in"
+  e' <- lexpr
+  return $ Let x e e'
+
+lvar :: ParserM LExpr
+lvar = Var <$> variable
+
+lamparen :: ParserM LExpr
+lamparen = bracket (symbol "(") lexpr (symbol ")")
+
+variable :: ParserM String
+variable = identifier ["let", "in"]
+
 identP = identifier ["hello", "world"]
 
-test = runParserM $ parse . many . token $ identP
+test = runParserM $ parse . many . token $ lexpr
 
 
