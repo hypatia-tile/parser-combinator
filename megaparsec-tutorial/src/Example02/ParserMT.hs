@@ -3,39 +3,6 @@ module Example02.ParserMT where
 import Control.Applicative (Alternative (..))
 import Control.Monad (MonadPlus (..))
 
-newtype ParserM m a = PMT {runPMT :: String -> m (a, String)}
-
-type LexerM = ParserM Maybe
-
-instance (Functor m) => Functor (ParserM m) where
-  -- fmap (a -> b) -> ParserMT m a -> ParserMT m b
-  fmap f p = PMT $ \inp -> fmap (\(x, rest) -> (f x, rest)) (runPMT p inp)
-
-instance (Monad m) => Applicative (ParserM m) where
-  -- pure :: m => a -> ParserMT a
-  pure x = PMT $ \inp -> pure (x, inp)
-
-  -- (<*>) :: ParserMT m (a -> b) -> ParserMT m a -> ParserMT m b
-  (PMT f) <*> (PMT q) = PMT $ \inp -> do
-    (f', s) <- f inp
-    (q', s') <- q s
-    return (f' q', s')
-
-instance (Monad m) => Monad (ParserM m) where
-  return = pure
-  (PMT p) >>= f = PMT $ \inp -> do
-    (v, res) <- p inp
-    runPMT (f v) res
-
-instance (Alternative m, Monad m) => Alternative (ParserM m) where
-  empty = PMT $ \_ -> empty
-  (PMT p) <|> (PMT q) = PMT $ \inp ->
-    p inp <|> q inp
-
-instance (MonadPlus m, Monad m) => MonadPlus (ParserM m) where
-  mzero = empty
-  mplus = (<|>)
-
 newtype StateMonad s m a = S { runState :: s -> m (a, s) }
 
 instance (Functor m) => Functor (StateMonad s m) where
@@ -84,4 +51,9 @@ instance (Alternative m, Monad m) => Alternative (StateMonad s m) where
 instance (MonadPlus m) => MonadPlus (StateMonad s m) where
   mzero = empty
   mplus = (<|>)
+
+type Pos = (Int, Int)
+type Pstring = (Pos, String)
+type ParserM a = StateMonad Pstring Maybe a
+
 
