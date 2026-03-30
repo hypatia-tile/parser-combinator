@@ -77,3 +77,11 @@ instance (Monad m) => MonadState s (StateMonad s m) where
     put s'
     return v
 
+instance (Alternative m, Monad m) => Alternative (StateMonad s m) where
+  empty = S $ \_ -> empty
+  (S f) <|> (S g) = S $ \s -> f s <|> g s
+
+instance (MonadPlus m) => MonadPlus (StateMonad s m) where
+  mzero = empty
+  mplus = (<|>)
+
