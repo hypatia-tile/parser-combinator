@@ -15,6 +15,7 @@ library
       MyLib,
       Example01.Trivial,
       Example01.ParserM,
+      Example02.ParserMT,
     build-depends:
       base ^>=4.20.2.0,
       megaparsec,
