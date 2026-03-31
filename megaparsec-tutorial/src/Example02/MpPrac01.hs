@@ -21,6 +21,8 @@ test02 :: String -> String -> IO ()
 test02 w inp = do
   parseTest (chunk w :: Parser String) inp
 
+-- Parsec and ParsecT are monads,
+-- and monadic bind is exactly what we use for sequencing our parsers.
 mySequence :: Parser (Char, Char, Char)
 mySequence = do
   a <- single 'a'
