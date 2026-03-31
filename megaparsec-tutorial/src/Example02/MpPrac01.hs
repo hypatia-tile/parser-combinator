@@ -21,3 +21,12 @@ test02 :: String -> String -> IO ()
 test02 w inp = do
   parseTest (chunk w :: Parser String) inp
 
+mySequence :: Parser (Char, Char, Char)
+mySequence = do
+  a <- single 'a'
+  b <- single 'b'
+  c <- single 'c'
+  return (a, b, c)
+
+testP :: (Show a) => Parser a -> String -> IO ()
+testP = parseTest
