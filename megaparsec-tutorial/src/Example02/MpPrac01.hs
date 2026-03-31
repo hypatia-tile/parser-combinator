@@ -30,5 +30,12 @@ mySequence = do
   c <- single 'c'
   return (a, b, c)
 
+mySequence' :: Parser (Char, Char, Char)
+mySequence' =
+  (,,) <$>
+    single 'a' <*>
+    single 'b' <*>
+    single 'c'
+
 testP :: (Show a) => Parser a -> String -> IO ()
 testP = parseTest
