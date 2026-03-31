@@ -2,7 +2,7 @@ module Example02.MpPrac01 where
 
 import Data.Void
 import Text.Megaparsec
-import qualified Data.Set as Set
+import Text.Megaparsec.Char
 
 type Parser = Parsec Void String
 
@@ -33,9 +33,19 @@ mySequence = do
 mySequence' :: Parser (Char, Char, Char)
 mySequence' =
   (,,) <$>
-    single 'a' <*>
-    single 'b' <*>
-    single 'c'
+    char 'a' <*>
+    char 'b' <*>
+    char 'c'
+
+mySequences :: Parser [(Char, Char, Char)]
+mySequences = many mySequence'
+
+multias :: Parser String
+multias = many (char 'a')
+
+multiabcs :: Parser [String]
+multiabcs = many (string "abc")
 
 testP :: (Show a) => Parser a -> String -> IO ()
 testP = parseTest
+
