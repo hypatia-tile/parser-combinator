@@ -16,6 +16,7 @@ library
       Example01.Trivial,
       Example01.ParserM,
       Example02.ParserMT,
+      Example02.MpPrac01,
     build-depends:
       base ^>=4.20.2.0,
       megaparsec,

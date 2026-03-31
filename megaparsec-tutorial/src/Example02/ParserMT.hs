@@ -52,8 +52,11 @@ instance (MonadPlus m) => MonadPlus (StateMonad s m) where
   mzero = empty
   mplus = (<|>)
 
+newtype ReaderM m s a = R { unReader :: s -> m a }
+
+
 type Pos = (Int, Int)
 type Pstring = (Pos, String)
-type ParserM a = StateMonad Pstring Maybe a
+type ParserM a = Pos -> StateMonad Pstring Maybe a
 
 
