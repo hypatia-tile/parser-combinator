@@ -46,6 +46,12 @@ multias = many (char 'a')
 multiabcs :: Parser [String]
 multiabcs = many (string "abc")
 
+-- enforce parser to consume entire input
+--  see: Text.Megaparsec eof :: MonadParsec e s m => m ()
+--    Now eof :: Parser ()
+multiabcend :: Parser [String]
+multiabcend = multiabcs <* eof
+
 testP :: (Show a) => Parser a -> String -> IO ()
 testP = parseTest
 
