@@ -17,6 +17,7 @@ library
       Example01.ParserM,
       Example02.ParserMT,
       Example02.MpPrac01,
+      Example02.MpPrac02,
     build-depends:
       base ^>=4.20.2.0,
       megaparsec,
