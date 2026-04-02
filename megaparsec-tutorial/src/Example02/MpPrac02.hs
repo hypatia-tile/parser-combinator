@@ -3,12 +3,13 @@
 
 module Example02.MpPrac02 where
 
-import Control.Monad (void)
 import Control.Applicative (Alternative ())
+import Control.Monad (void)
 import Data.Void
 import Text.Megaparsec hiding (State, optional)
 import Text.Megaparsec.Char
-import qualified Text.Megaparsec.Char.Lexer as L
+import Text.Megaparsec.Debug
+import Text.Megaparsec.Char.Lexer qualified as L
 
 type Parser = Parsec Void String
 
@@ -92,7 +93,7 @@ pUri = do
   void (char ':')
   uriAuthority <- optional . try $ do
     void (string "//")
-    authUser <- optional .try $ do
+    authUser <- optional . try $ do
       user <- some alphaNumChar
       void (char ':')
       password <- some alphaNumChar
@@ -109,3 +110,31 @@ f = do
   parseTest (pUri <* eof) "https://mark:secret@example.com:123"
   parseTest (pUri <* eof) "https://example.com:123"
   parseTest (pUri <* eof) "https://mark@example.com:123"
+  parseTest (pUri <* eof) "https://mark:@example.com"
+
+
+-- dbg :: (VisualStream s, ShowToken (Token s), ShowErrorComponent e, Show a)
+--   => String          -- ^ Debugging label
+--   -> ParsecT e s m a -- ^ Parser to debug
+--   -> ParsecT e s m a -- ^ Parser that prints debugging messages
+pUri' :: Parser Uri
+pUri' = do
+  uriScheme <- dbg "scheme" pScheme
+  void (char ':')
+  uriAuthority <- dbg "auth" . optional . try $ do
+    void (string "//")
+    authUser <- dbg "user" . optional . try $ do
+      user <- some alphaNumChar
+      void (char ':')
+      password <- some alphaNumChar
+      void (char '@')
+      return (user,password)
+    authHost <- dbg "host" (some (alphaNumChar <|> char '.'))
+    authPort <- dbg "port" $ optional (char ':' *> L.decimal)
+    return Authority {..}
+  return Uri {..}
+
+g :: IO ()
+g = do
+  parseTest (pUri' <* eof) "https://mark:secret@example.com"
+  parseTest (pUri' <* eof) "https://mark:@example.com"
