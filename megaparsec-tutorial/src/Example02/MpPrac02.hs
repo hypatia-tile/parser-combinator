@@ -62,7 +62,8 @@ pScheme =
 
 -- for the performance reasone,
 --   megaprasec does not backtrack automatically
--- so (a >>= b) <|> (a >>= c) is not the same as a >>= (b <|> c)
+-- so f <*> (a <|> c) is not the same as (f <*> a <|> f <*>) 
+-- That is, right distribution law does not suffice
 alternatives :: Parser (Char, Char)
 alternatives = foo <|> bar
   where
@@ -91,7 +92,7 @@ pUri :: Parser Uri
 pUri = do
   uriScheme <- pScheme
   void (char ':')
-  uriAuthority <- optional . try $ do
+  uriAuthority <- optional $ do
     void (string "//")
     authUser <- optional . try $ do
       user <- some alphaNumChar
@@ -111,6 +112,7 @@ f = do
   parseTest (pUri <* eof) "https://example.com:123"
   parseTest (pUri <* eof) "https://mark@example.com:123"
   parseTest (pUri <* eof) "https://mark:@example.com"
+  parseTest (pUri <* eof) "https:"
 
 
 -- dbg :: (VisualStream s, ShowToken (Token s), ShowErrorComponent e, Show a)
@@ -121,7 +123,7 @@ pUri' :: Parser Uri
 pUri' = do
   uriScheme <- dbg "scheme" pScheme
   void (char ':')
-  uriAuthority <- dbg "auth" . optional . try $ do
+  uriAuthority <- dbg "auth" . optional $ do
     void (string "//")
     authUser <- dbg "user" . optional . try $ do
       user <- some alphaNumChar
@@ -136,5 +138,20 @@ pUri' = do
 
 g :: IO ()
 g = do
-  parseTest (pUri' <* eof) "https://mark:secret@example.com"
+  -- parseTest (pUri' <* eof) "https://mark:secret@example.com"
   parseTest (pUri' <* eof) "https://mark:@example.com"
+  parseTest (pUri' <* eof) "https:"
+  parseTest (pUri') "https:nonono"
+
+hp :: Parser (Maybe (Char, Char))
+hp = do
+  void (string "--")
+  a <- optional $ do
+    char 'a'
+  b <- optional $ do
+    char '2'
+  return $ (,) <$> b <*> a
+
+h :: String -> IO ()
+h inp = do
+  parseTest hp inp
