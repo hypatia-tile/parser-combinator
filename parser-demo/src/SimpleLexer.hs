@@ -17,7 +17,7 @@ identP = TIdent <$> ((:) <$> satisfy isAlpha <*> munch isAlphaNum)
 
 -- Parse One token, skipping leading whitespaces.
 tokenP :: ReadP Token
-tokenP = skipSpaces *>
+tokenP =
   ( (TInt . read <$> munch1 isDigit)
     <++ identP
     <++ (TPlus <$ char '+')
@@ -28,7 +28,7 @@ tokenP = skipSpaces *>
 
 -- Parse all tokens until end of input.
 tokensP :: ReadP [Token]
-tokensP = many tokenP <* skipSpaces <* eof
+tokensP = skipSpaces *> many (tokenP <* skipSpaces) <* eof
 
 lexArithmetic :: String -> Either String [Token]
 lexArithmetic input =
