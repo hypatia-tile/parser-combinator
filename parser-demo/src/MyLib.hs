@@ -1,19 +1,18 @@
 -- Create various parser here, experement and search my better way to write parser
 module MyLib (someFunc) where
 
-import SimpleLexer
+import Simple.Parser.SimpleParser
+import Simple.Combinator.Parser
 
 someFunc :: IO ()
 someFunc = test input
 
 input :: String
-input = "a + bcd * 12 + 3 * (45 + 6)"
+input = "1+2+3*4"
 
 test :: String -> IO ()
 test src = do
-  case lexArithmetic src of
-    Left err -> putStrLn $ "Error: " ++ err
-    Right tokens -> do
-      putStrLn "Tokens:"
-      mapM_ print tokens
+  case runParser expr src of
+    Just expression -> print expression
+    Nothing -> putStrLn "Failed to parse"
 
