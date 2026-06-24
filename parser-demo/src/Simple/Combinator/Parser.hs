@@ -2,6 +2,7 @@ module Simple.Combinator.Parser (
     Parser,
     ParserT (runParser),
     mkParser,
+    satisfy,
 ) where
 
 import Data.Functor.Identity (Identity)
@@ -23,3 +24,8 @@ instance (Monad m) => Applicative (ParserT m) where
 instance (Monad m) => Monad (ParserT m) where
   return = pure
   (P x) >>= f = P $ \inp -> do (x', res) <- x inp; runParser (f x') res
+
+instance (MonadFail m) => MonadFail (ParserT m) where
+  fail msg = P $ (\_ -> fail msg)
+
+
