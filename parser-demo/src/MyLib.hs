@@ -12,7 +12,7 @@ input = "1+2+3*4"
 
 test :: String -> IO ()
 test src = do
-  case runParser expr src of
+  case runParser parseAExp src of
     Just expression -> print expression
     Nothing -> putStrLn "Failed to parse"
 
