@@ -13,7 +13,6 @@ library
     import:           warnings
     exposed-modules:
       MyLib,
-      SimpleLexer,
       Simple.Data.AExp,
       Simple.Parser.SimpleParser,
       Simple.Combinator.Parser,
