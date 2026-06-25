@@ -3,9 +3,9 @@ module Main (main) where
 import Simple.Combinator.Parser (
     runParser,
     satisfy,
-    char,
     takeWhileP,
     skipSpaceP,
+    char,
     takeWhileP1,
     manyP,
  )
@@ -24,9 +24,24 @@ assertEqual label expected actual =
 main :: IO ()
 main = do
   assertEqual
-    "char succeeds on matching char"
+    "satisfy succeeds on matching char"
     (Just ('+', "123"))
-    (runParser (char '+') "+123")
+    (runParser (satisfy (== '+')) "+123")
+
+  assertEqual
+    "char fails if no matching char"
+    (Nothing)
+    (runParser (char '+') "123")
+
+  assertEqual
+    "skipSpaceP succeed on matching space"
+    (Just ((), "123"))
+    (runParser skipSpaceP " 123")
+
+  assertEqual
+    "skipSpaceP succeed on matching space"
+    (Just ((), " 123"))
+    (runParser skipSpaceP "  123")
 
   assertEqual
     "manyP char succeed on matching char"
