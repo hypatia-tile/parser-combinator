@@ -16,6 +16,7 @@ library
       Simple.Data.AExp,
       Simple.Parser.SimpleParser,
       Simple.Combinator.Parser,
+      Simple.Combinator.Lexer,
     build-depends:    base ^>=4.20.2.0
     hs-source-dirs:   src
     default-language: GHC2021

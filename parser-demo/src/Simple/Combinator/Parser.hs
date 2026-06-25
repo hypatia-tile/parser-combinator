@@ -5,11 +5,13 @@ module Simple.Combinator.Parser (
     satisfy,
     char,
     takeWhileP,
+    skipSpaceP,
     takeWhileP1,
     manyP,
 ) where
 
 import Data.Functor.Identity (Identity)
+import Data.Char (isSpace)
 import Control.Applicative
 
 newtype ParserT m a = P {runParser :: String -> m (a, String)}
@@ -66,6 +68,9 @@ satisfy_ predic = item_ >>= (go predic)
     go p x = P $ \inp -> case x of
       Just x' -> if p x' then return (Just x', inp) else return (Nothing, inp)
       _ -> return (Nothing, inp)
+
+skipSpaceP :: (Monad m, MonadFail m) => ParserT m ()
+skipSpaceP = satisfy (isSpace) *> return ()
 
 takeWhileP :: (Monad m) => (Char -> Bool) -> ParserT m [Char]
 takeWhileP predic = let
