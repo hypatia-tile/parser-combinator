@@ -2,10 +2,12 @@ module Main (main) where
 
 import Simple.Combinator.Parser (
     runParser,
+    satisfy,
     char,
-    manyP,
     takeWhileP,
+    skipSpaceP,
     takeWhileP1,
+    manyP,
  )
 import System.Exit (exitFailure)
 
@@ -25,26 +27,32 @@ main = do
     "char succeeds on matching char"
     (Just ('+', "123"))
     (runParser (char '+') "+123")
+
   assertEqual
     "manyP char succeed on matching char"
     (Just ("----", "123"))
     (runParser (manyP $ char '-') "----123")
+
   assertEqual
     "manyP char succeed while no character match"
     (Just ("", "123"))
     (runParser (manyP $ char '-') "123")
+
   assertEqual
     "takeWhileP succeed on matching multi char"
     (Just ("111", "234"))
     (runParser (takeWhileP (== '1')) "111234")
+
   assertEqual
     "takeWhileP succeed while no character match"
     (Just ("", "234"))
     (runParser (takeWhileP (== '1')) "234")
+
   assertEqual
     "takeWhileP1 succeed on matching multi char"
     (Just ("111", "234"))
     (runParser (takeWhileP1 (== '1')) "111234")
+
   assertEqual
     "takeWhileP1 fail if no character match"
     (Nothing)
