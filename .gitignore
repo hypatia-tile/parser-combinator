@@ -1,5 +1,6 @@
 .direnv/
 .env
+**/tags
 
 bin_note/
 
