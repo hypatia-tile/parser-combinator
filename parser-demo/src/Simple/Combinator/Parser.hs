@@ -14,8 +14,6 @@ module Simple.Combinator.Parser (
 
 import Simple.Combinator.Parser.Internal
 import Data.Char (isSpace)
-import Control.Applicative
-
 
 char :: (Monad m, MonadFail m) => Char -> ParserT m Char
 char c = satisfy1 (c ==)
