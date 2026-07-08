@@ -14,6 +14,7 @@ library
     exposed-modules:
       MyLib,
       Simple.Data.AExp,
+      Simple.Eval.AExp,
       Simple.Parser.SimpleParser,
       Simple.Combinator.Parser,
       Simple.Combinator.Lexer,
